@@ -28,8 +28,8 @@ def handle_fetch(client_socket, available_file_list, index_list):
      client_socket.sendall(msg.encode('utf-8'))
      print(f"Send information of client {chosen_client} for {filename} to {client_address}")
   
-def update_file_list():
-  print("update server's file")
+def update_file_list(hostname, fname):
+  pass
 
 def ping(hostname):
   print("pinging a host name")

@@ -1,4 +1,7 @@
-from ClientUI import display_available_file
+import sys
+sys.path.append("..") # Adds higher directory to python modules path.
+
+from UI.ClientUI import display_available_file
 import ast
 import socket
 

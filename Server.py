@@ -11,21 +11,34 @@ class Server:
     self.available_file_list = {}
     self.index_list = {}
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind((self.Server_IP, self.Main_port))
-    server_socket.listen(self.Capacity)
+    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    self.server_socket.bind((self.Server_IP, self.Main_port))
+    self.server_socket.listen(self.Capacity)
     print("init server")
   
   def publish(self, hostname, fname):
-    print("do some publish thing")
+    if fname in self.available_file_list.keys():
+        self.available_file_list[fname].append(hostname)
+    else:
+        self.available_file_list[fname] = [hostname]
+    update_file_list(hostname, fname)    
   
   def handle_server_UI(self):
-    print("handle the server 's UI ")
+    while True:
+      command = input().split(" ")
+      if command[0] == "Display":
+        ServerUI.display_publish_file(self.available_file_list)
+      elif command[0] == "Discover":
+        pass
+      elif command[0] == "Ping":
+        pass
+      else: print("Undefined command")
     
   def handle_client(self, client_socket):
       # Extract client address
       client_address = client_socket.getpeername()
+      print(client_address)
 
       # handle the messages from the client
       while True: 
@@ -38,7 +51,7 @@ class Server:
             # Check the type of message from client 
             msg = msg.split(None, 1)
             if msg[0] == "publish":
-                self.publish(client_socket, msg[2])
+                self.publish(client_socket, msg[1])
             elif msg[0] == "fetch":
                 handle_fetch(client_socket)
     

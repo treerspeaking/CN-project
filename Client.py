@@ -5,6 +5,7 @@ from ClientAPI.SendFile import handle_fetch_request
 from UI.ClientUI import ClientUI
 import ast
 import socket
+import os
 
 class Client:
   def __init__(self, server_IP_address, server_port, client_IP_address, client_port, clientUI):
@@ -13,10 +14,17 @@ class Client:
     self.User_IP = client_IP_address
     self.Port_num = client_port
     self.ClientUI = clientUI
+
+    self.repoPath = "repository"
+    # if os.path.exists(self.repoPath): 
+    #   self.published_file = os.listdir(self.repoPath)
+    #   discover(self.server_socket, self.published_file)
+    # else: self.published_file = []
+
     self.published_file = []
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect((self.server_IP, self.server_port))
+    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.server_socket.connect((self.server_IP, self.server_port))
     print("init client")
   
   def handle_client(self):
@@ -39,11 +47,24 @@ class Client:
         msg = msg.split(None, 1)
         if msg[0] == "discover":
               discover(server_socket, self.published_file)     
+
   def handle_client_UI(self):
-    publish("some file")
+     command = input().split(' ')
+     if command[0] == "fetch":
+        pass
+     elif command[0] == "publish":
+        if publish(command[1], "repository", self.server_socket):
+          self.published_file.append(command[1])
+          self.ClientUI.display_published_file(self.published_file)
+        else:
+          print("Cannot publish file to server")
+     else:
+        print(f"Undefined command: {command[0]}")
   
   def request_server_file(self):
     handle_fetch_request()
+
+  del __
 
 if __name__ == "__main__": 
   clientUI = ClientUI()
