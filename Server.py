@@ -9,12 +9,14 @@ class Server:
     self.Capacity = max_client
     self.ServerUI = serverUI
     self.available_file_list = {}
-    self.index_list = {}
+    self.index_list = {}  # key: FileName and value: [ClientSocket]
 
-    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    self.server_socket.bind((self.Server_IP, self.Main_port))
-    self.server_socket.listen(self.Capacity)
+    self.client_list = {} # key: ClientName and value: IP and Port
+
+    # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # server_socket.bind((self.Server_IP, self.Main_port))
+    # server_socket.listen(self.Capacity)
     print("init server")
   
   def publish(self, hostname, fname):
@@ -22,17 +24,28 @@ class Server:
         self.available_file_list[fname].append(hostname)
     else:
         self.available_file_list[fname] = [hostname]
-    update_file_list(hostname, fname)    
+    update_file_list(hostname, fname)
+
+  def update_available_file(list_file):
+    print("Have not yet implement Update_availabel_file function in Server")
   
   def handle_server_UI(self):
     while True:
       command = input().split(" ")
       if command[0] == "Display":
         ServerUI.display_publish_file(self.available_file_list)
+
       elif command[0] == "Discover":
-        pass
+        serverUI.display_available_client(self.client_list)
+        clientName = input("Client name: ")
+        file_list = discover(self.client_list[clientName])
+        self.update_available_file(file_list)
+
       elif command[0] == "Ping":
-        pass
+        serverUI.display_available_client(self.client_list)
+        clientName = input("Client name: ")
+        ping(self.client_list[clientName])
+
       else: print("Undefined command")
     
   def handle_client(self, client_socket):

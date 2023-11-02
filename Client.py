@@ -14,6 +14,7 @@ class Client:
     self.User_IP = client_IP_address
     self.Port_num = client_port
     self.ClientUI = clientUI
+    self.ClientName = input("Input client name: ")
 
     self.repoPath = "repository"
     # if os.path.exists(self.repoPath): 
@@ -23,8 +24,8 @@ class Client:
 
     self.published_file = []
 
-    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.server_socket.connect((self.server_IP, self.server_port))
+    # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # server_socket.connect((self.server_IP, self.server_port))
     print("init client")
   
   def handle_client(self):
@@ -46,14 +47,14 @@ class Client:
         # Check the type of message from client. 
         msg = msg.split(None, 1)
         if msg[0] == "discover":
-              discover(server_socket, self.published_file)     
+          discover(server_socket, self.published_file)     
 
-  def handle_client_UI(self):
+  def handle_client_UI(self, server_socket):
      command = input().split(' ')
      if command[0] == "fetch":
-        pass
+        fetch(server_socket)
      elif command[0] == "publish":
-        if publish(command[1], "repository", self.server_socket):
+        if publish(command[1], "repository", server_socket):
           self.published_file.append(command[1])
           self.ClientUI.display_published_file(self.published_file)
         else:
@@ -63,8 +64,6 @@ class Client:
   
   def request_server_file(self):
     handle_fetch_request()
-
-  del __
 
 if __name__ == "__main__": 
   clientUI = ClientUI()

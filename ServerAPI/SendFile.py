@@ -1,3 +1,5 @@
+import socket
+
 def choose_client(filename, available_file_list, index_list):
      avail_client = available_file_list[filename]
      chosen_index = index_list[filename]
@@ -29,21 +31,32 @@ def handle_fetch(client_socket, available_file_list, index_list):
      print(f"Send information of client {chosen_client} for {filename} to {client_address}")
   
 def update_file_list(hostname, fname):
-  pass
+   print("Do not need to use Update_file_list function in SendFile.py")
 
-def ping(hostname):
-  print("pinging a host name")
+# Vấn đề chưa biết code như nào ???
+def ping(clientIP, clientPort):
+   print("Have not yet implement ping in Server function")
 
-def discover(client_socket):
-  msg = "discover"
-  client_socket.sendall(msg.encode('utf-8'))
+# def discover(client_socket):
+#   msg = "discover"
+#   client_socket.sendall(msg.encode('utf-8'))
 
-  msg = client_socket.recv(1024).decode('utf-8')
-  if len(msg) == 0:
-      print("Connection closed by the client.")
-      return
-  msg = msg.split()
-  return msg 
+#   msg = client_socket.recv(1024).decode('utf-8')
+#   if len(msg) == 0:
+#       print("Connection closed by the client.")
+#       return
+#   msg = msg.split()
+#   return msg 
+
+def discover(clientIP, clientPort):
+  connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  connection.connect((clientIP, clientPort))
+
+  connection.sendall("discover".encode())
+  strFileList = connection.recv(1024).decode()
+
+  return strFileList.split(" ")
+   
 
 def check_file():
   print("check if the requested file exist")
